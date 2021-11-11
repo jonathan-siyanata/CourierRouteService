@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+
+    <title>Jalia Technologies Courier Service Route Selection</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKIKYBzV3BSaimg8sA--gj9sft5MvzgLU"></script>
+</head>
+<body>
+<!--Dropdown courierBtn-->
+<div class="btn-group">
+    <button class="btn btn-secondary btn-lg" type="button">
+        Courier Route ID
+    </button>
+    <button type="button" class="btn btn-lg btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="routeIdBtn">
+    </div>
+</div>
+<!--Close Map Button-->
+<div class="text-right">
+    <button type="button" id="closeMapBtn" class="btn btn-secondary btn-lg">Close Map</button>
+</div>
+<!--Map-->
+<div id="map-canvas"></div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Shortest Delivery Route</h5>
+                <button type="button" class="btn btn-info" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+
+            </div>
+            <div class="modal-footer">
+                <!-- Algorithm button -->
+                <div class="btn-group dropRight">
+                    <input type="hidden" id="algo" value=""/>
+                    <button type="button" class="btn btn-secondary">Choose Algorithm</button>
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle DropRight</span>
+                    </button>
+                    <div class="dropdown-menu" id="algorithmBtn">
+                        <!-- Dropdown menu links -->
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="plotBtn">Plot Delivery Route</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Carousel-->
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+
+    <div class="carousel-inner">
+        <div class="container">
+            <h1>Welcome To Jalia's Courier Service</h1>
+            <p>We wish you a productive and fruitful day, drive safely</p>
+        </div>
+        <div class="carousel-item active" style="background-image: url(./images/courier5.jpeg);">
+<!--            <img src="..." class="d-block w-100" alt="...">-->
+
+        </div>
+        <div class="carousel-item" style="background-image: url(./images/courier7.jpeg);">
+<!--            <img src="..." class="d-block w-100" alt="...">-->
+        </div>
+        <div class="carousel-item" style="background-image: url(./images/courier9.jpeg);">
+<!--            <img src="..." class="d-block w-100" alt="...">-->
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+
+<script>
+    var routeId = '';
+    $(document).ready(function(){
+        $.getJSON('http://localhost:8080/accessingdatawithmysql-0.0.1-SNAPSHOT/accessing-data-with-mysql/getRouteId', function(data){
+            var wholeData = data[0];
+            for(var x=0;x<wholeData.length; x++){
+                $('#routeIdBtn').append('<a href="#" class="dropdown-item" onclick="event.stopPropagation; openModal('+ wholeData[x].route_id +'); ">' + wholeData[x].route_description +'</a>');
+               }
+            console.log('route id has been retrieved');
+        });
+    });
+
+    function openModal(driverRouteId){
+        routeId = driverRouteId
+    console.log(routeId);
+       var options={
+            show: true
+        }
+        $("#myModal").modal(options);
+        console.log("Modal Opened");
+        chooseAlgorithm();
+    }
+    function chooseAlgorithm(){
+        $.getJSON('http://localhost:8080/accessingdatawithmysql-0.0.1-SNAPSHOT/accessing-data-with-mysql/readAlgorithms', function(data){
+            var wholeData = data[0];
+            for(var x=0;x<wholeData.length;x++){
+                $('#algorithmBtn').append('<a class="dropdown-item" href="#" onclick="event.stopPropagation; chosenAlgorithm(\'' + wholeData[x].algorithm_type + '\')">' + wholeData[x].algorithm_type +'</a>');
+            }
+            console.log('Algorithms have been retrieved');
+        });
+    }
+
+
+    function chosenAlgorithm(algorithmType){
+        console.log('algorithm type is = ' + algorithmType);
+        document.getElementById("algo").value = algorithmType;
+        getShortestRoute(routeId);
+    }
+    var coordinateList = [];
+    function getShortestRoute(routeId){
+         var hiddenValue = document.getElementById("algo");
+         $.getJSON('http://localhost:8080/accessingdatawithmysql-0.0.1-SNAPSHOT/accessing-data-with-mysql/shortestRoute/' + hiddenValue.value + '/' + routeId , function(data){
+         var shortestRoute = data.shortestRoute;
+         var route = " ";
+
+         for(var x=0;x<data.shortestRoute.cities.length; x++){
+                route = route + shortestRoute.cities[x].name + '; ';
+                var latLng ={"lat": shortestRoute.cities[x].latitude, "lng" : shortestRoute.cities[x].longitude};
+                coordinateList.push(latLng);
+         }
+         $('#modalBody').append('<p>' + route + '</p>');
+         console.log( hiddenValue.value + ' performed');
+        });
+    }
+    $('#modalBody').on('hidden.bs.modal', function(){
+            $(this).find("input,textarea,select").val('').end();
+         });
+
+
+    $('#plotBtn').click(function(){
+         event.stopPropagation;
+         plotMarker(coordinateList);
+         console.log('map created and route plotted');
+    });
+
+    function plotMarker(coordinateList){
+        var mapDiv = document.getElementById("map-canvas");
+         var mapOptions = {
+         center: {lat: -26.270760, lng: 28.112268},
+         zoom: 8,
+         mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(mapDiv, mapOptions);
+
+        for(var x=0;x<coordinateList.length;x++){
+            var latLng = coordinateList[x];
+         differentMarkers = new google.maps.Marker({
+              position : latLng,
+              label: "" + (x+1),
+              map: map
+          });
+        }
+        var polygonOptions = {path: coordinateList, strokeColor:"#ff0000"};
+        var polygon = new google.maps.Polygon(polygonOptions);
+        polygon.setMap(map);
+    }
+
+
+</script>
+
+
+</body>
+</html>
