@@ -12,13 +12,16 @@
 
 	<groupId>za.co.jaliatechnologies</groupId>
 	<artifactId>accessingdatawithmysql</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-${release.identifier}-${buildNumber}</version>
+	<properties>
+		<release.identifier>SNAPSHOT</release.identifier>
+	</properties>
 	<packaging>war</packaging>
 	<name>AccessingDataWithMysql</name>
 	<description>Demo project for Spring Boot</description>
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
+<!--	<properties>-->
+<!--		<java.version>1.8</java.version>-->
+<!--	</properties>-->
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -163,7 +166,12 @@
 		</dependency>
 
 	</dependencies>
-
+	<scm>
+		<connection>scm:svn:http://localhost:8080/manager/text</connection>
+		<developerConnection>scm:svn:https://localhost:8080/manager/text</developerConnection>
+		<tag>HEAD</tag>
+		<url>localhost:8080/manager/text</url>
+	</scm>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -184,6 +192,27 @@
 						<path>/accessingdatawithmysql</path>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>useLastCommittedRevision</id>
+							<phase>generate-resources</phase>
+							<goals>
+								<goal>create</goal>
+							</goals>
+							<configuration>
+								<doCheck>false</doCheck>
+								<doUpdate>false</doUpdate>
+								<format>{0, date, yyyy-MM-dd_Hh-mm}_{1}</format>
+								<useLastCommittedRevision>true</useLastCommittedRevision>
+								<item>timestamp</item>
+								<item>{user.name}</item>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -194,6 +223,7 @@
 				<version>3.4.3</version>
 			</extension>
 		</extensions>
-	</build>
+		<finalName>${project.artifactId}-${project.version}-${project.build}</finalName>
 
+	</build>
 </project>
