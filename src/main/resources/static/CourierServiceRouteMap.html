@@ -106,7 +106,7 @@
 <script>
     var routeId = '';
     $(document).ready(function(){
-        $.getJSON('http://localhost:8080/accessingdatawithmysql/accessing-data-with-mysql/getRouteId', function(data){
+        $.getJSON('http://localhost:8888/accessingdatawithmysql/accessing-data-with-mysql/getRouteId', function(data){
             var wholeData = data[0];
             for(var x=0;x<wholeData.length; x++){
                 $('#routeIdBtn').append('<a href="#" class="dropdown-item" onclick="event.stopPropagation; openModal('+ wholeData[x].route_id +'); ">' + wholeData[x].route_description +'</a>');
@@ -127,7 +127,7 @@
         chooseAlgorithm();
     }
     function chooseAlgorithm(){
-        $.getJSON('http://localhost:8080/accessingdatawithmysql/accessing-data-with-mysql/readAlgorithms', function(data){
+        $.getJSON('http://localhost:8888/accessingdatawithmysql/accessing-data-with-mysql/readAlgorithms', function(data){
             var wholeData = data[0];
             for(var x=0;x<wholeData.length;x++){
                 $('#algorithmBtn').append('<a class="dropdown-item" href="#" onclick="event.stopPropagation; chosenAlgorithm(\'' + wholeData[x].algorithm_type + '\')">' + wholeData[x].algorithm_type +'</a>');
@@ -145,7 +145,7 @@
     var coordinateList = [];
     function getShortestRoute(routeId){
          var hiddenValue = document.getElementById("algo");
-         $.getJSON('http://localhost:8080/accessingdatawithmysql/accessing-data-with-mysql/shortestRoute/' + hiddenValue.value + '/' + routeId , function(data){
+         $.getJSON('http://localhost:8888/accessingdatawithmysql/accessing-data-with-mysql/shortestRoute/' + hiddenValue.value + '/' + routeId , function(data){
          var shortestRoute = data.shortestRoute;
          var route = " ";
 
